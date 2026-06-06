@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Laboration_2OOP.Domän;
 
 namespace Laboration_2OOP.Domän
 {
