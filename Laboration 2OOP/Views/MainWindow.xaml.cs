@@ -588,22 +588,26 @@ namespace Laboration_2OOP
         // Reload helpers
         private void ReloadMembers()
         {
-            var source = _vm.Members.OnlyActiveMembers
-                ? _state.Medlemmar.HämtaAktiva()
-                : _state.Medlemmar.Alla;
-
-            _members.Clear();
-            _vm.Members.MemberTexts.Clear();
-            _vm.Anmälningar.Medlemmar.Clear();
-
-            foreach (var m in source)
+            using (var db = new AppDbContext())
             {
-                var uiMember = new UiMember(m.MedlemsId, m.ToString());
-                _members.Add(uiMember);
-                _vm.Members.MemberTexts.Add(uiMember);
-                _vm.Anmälningar.Medlemmar.Add(uiMember);
+                var source = _vm.Members.OnlyActiveMembers
+                    ? db.Medlemmar.Where(m => m.Status == MedlemsStatus.Aktiv).ToList()
+                    : db.Medlemmar.ToList();
+
+                _members.Clear();
+                _vm.Members.MemberTexts.Clear();
+                _vm.Anmälningar.Medlemmar.Clear();
+
+                foreach (var m in source)
+                {
+                    var uiMember = new UiMember(m.MedlemsId, m.ToString());
+                    _members.Add(uiMember);
+                    _vm.Members.MemberTexts.Add(uiMember);
+                    _vm.Anmälningar.Medlemmar.Add(uiMember);
+                }
             }
         }
+
 
         private void ReloadEvents_UC1()
         {
