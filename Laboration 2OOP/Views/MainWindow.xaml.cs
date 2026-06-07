@@ -627,28 +627,38 @@ namespace Laboration_2OOP
 
         private void ReloadEvents_UC2()
         {
-            var source = _state.Träffar.KommandeSorteradeEfterLedigaPlatser();
-
-            _vm.Events.EventTexts.Clear();
-
-            foreach (var t in source)
+            using (var db = new AppDbContext())
             {
-                var uiEvent = new UiEvent(t.TräffId, FormateraSpelträffText(t));
-                _vm.Events.EventTexts.Add(uiEvent);
+                var source = db.Träffar
+                    .OrderBy(t => t.StartTid)
+                    .ToList();
+
+                _vm.Events.EventTexts.Clear();
+
+                foreach (var t in source)
+                {
+                    var uiEvent = new UiEvent(t.TräffId, FormateraSpelträffText(t));
+                    _vm.Events.EventTexts.Add(uiEvent);
+                }
             }
         }
+
 
 
         private void ReloadGames()
         {
-            _vm.Games.GameTexts.Clear();
-
-            foreach (var s in _state.Spel.Alla)
+            using (var db = new AppDbContext())
             {
-                var uiGame = new UiGame(s.SpelId, s.ToString());
-                _vm.Games.GameTexts.Add(uiGame);
+                _vm.Games.GameTexts.Clear();
+
+                foreach (var s in db.Spel.ToList())
+                {
+                    var uiGame = new UiGame(s.SpelId, s.ToString());
+                    _vm.Games.GameTexts.Add(uiGame);
+                }
             }
         }
+
 
         private void ReloadArrangorCombo_UC2()
         {
