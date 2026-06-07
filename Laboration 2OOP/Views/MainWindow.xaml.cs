@@ -52,6 +52,8 @@ namespace Laboration_2OOP
 
             _state = Laboration_2OOP.DemoData.Data.Skapa();
 
+           
+
 
 
             _vm.Anmälningar.Medlemmar.Clear();
@@ -345,8 +347,6 @@ namespace Laboration_2OOP
         }
 
 
-
-
         private void OnClearMemberFormClick(object sender, RoutedEventArgs e)
         {
             ClearMemberForm();
@@ -498,22 +498,19 @@ namespace Laboration_2OOP
                 int max = int.Parse(_vm.Games.MaxPlayers.Trim());
                 int tid = int.Parse(_vm.Games.GameTime.Trim());
 
-                var kategori = _vm.Games.SelectedCategory;
-                var grad = _vm.Games.SelectedDifficulty;
-
                 var info = new CreateGameInfo
+
                 {
                     Titel = _vm.Games.GameTitle,
-                    Kategori = kategori,
+                    Kategori = _vm.Games.SelectedCategory,
                     MinAntalSpelare = min,
                     MaxAntalSpelare = max,
                     SpelTidMinuter = tid,
-                    Svårighetsgrad = grad,
+                    Svårighetsgrad = _vm.Games.SelectedDifficulty,
                     Beskrivning = _vm.Games.Description,
-
                     Tillgänglighet = _vm.Games.SelectedAvailability
-
                 };
+
 
                 var nytt = _state.Spel.RegistreraNyttSpel(info);
 
