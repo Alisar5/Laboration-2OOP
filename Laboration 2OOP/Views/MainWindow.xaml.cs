@@ -688,7 +688,12 @@ namespace Laboration_2OOP
         {
             using (var db = new AppDbContext())
 
-           
+            {
+                var arrangör = db.Medlemmar.FirstOrDefault(m => m.MedlemsId == spelträff.AnsvarigArrangorId);
+
+
+
+
 
         private void ClearMemberForm()
         {
