@@ -275,6 +275,7 @@ namespace Laboration_2OOP
                 }
 
 
+
                 Log("OK: Ny medlem registrerad.");
                 ClearMemberForm();
                 ReloadMembers();
