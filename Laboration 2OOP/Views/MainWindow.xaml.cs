@@ -318,6 +318,23 @@ namespace Laboration_2OOP
                 return;
             }
 
+            try
+            {
+                int id = _vm.Members.SelectedMember.Id;
+
+                using (var db = new AppDbContext())
+                {
+                    var medlem = db.Medlemmar.FirstOrDefault(m => m.MedlemsId == id);
+
+                    if (medlem == null)
+                        throw new Exception("Medlem hittades inte i databasen.");
+
+                    medlem.UppdateraNamn(_vm.Members.FirstName, _vm.Members.LastName);
+                    medlem.UppdateraKontakt(_vm.Members.Email, _vm.Members.Phone);
+
+                    db.SaveChanges();
+                }
+
 
 
         private void OnClearMemberFormClick(object sender, RoutedEventArgs e)
