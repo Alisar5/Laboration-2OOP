@@ -309,7 +309,15 @@ namespace Laboration_2OOP
             }
         }
 
-       
+
+        private void OnUpdateMemberClick(object sender, RoutedEventArgs e)
+        {
+            if (_vm.Members.SelectedMember == null)
+            {
+                Log("Välj en medlem i listan innan du uppdaterar.");
+                return;
+            }
+
 
 
         private void OnClearMemberFormClick(object sender, RoutedEventArgs e)
