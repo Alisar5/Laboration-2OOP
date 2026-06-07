@@ -2,9 +2,10 @@
 using Laboration_2OOP.Domän;
 using Laboration_2OOP.Requests;
 using Laboration_2OOP.ViewModels;
+using System;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Data;
+using System.Globalization;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -33,6 +34,10 @@ namespace Laboration_2OOP
         public MainWindow()
         {
             InitializeComponent();
+            using (var db = new AppDbContext())
+            {
+                db.Database.EnsureCreated();
+            }
 
             _vm = new MainViewModel();
             DataContext = _vm;
