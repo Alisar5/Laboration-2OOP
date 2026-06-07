@@ -529,13 +529,10 @@ namespace Laboration_2OOP
                     db.SaveChanges();
                 }
 
-
-                var nytt = _state.Spel.RegistreraNyttSpel(info);
-
-                Log($"OK: Spel registrerat (#{nytt.SpelId}).");
+                Log("OK: Spel registrerat.");
                 ClearGameForm();
                 ReloadGames();
-
+                ReloadSpelLista_UC2();
             }
             catch (Exception ex)
             {
@@ -559,7 +556,16 @@ namespace Laboration_2OOP
                 int max = int.Parse(_vm.Games.MaxPlayers.Trim());
                 int tid = int.Parse(_vm.Games.GameTime.Trim());
 
-                var info = new UpdateGameInfo
+
+                using (var db = new AppDbContext())
+                {
+                    var spel = db.Spel.FirstOrDefault(s => s.SpelId == id);
+
+                    if (spel == null)
+                        throw new Exception("Spelet hittades inte i databasen.");
+
+
+                    var info = new UpdateGameInfo
                 {
                     Titel = _vm.Games.GameTitle,
                     Kategori = _vm.Games.SelectedCategory,
