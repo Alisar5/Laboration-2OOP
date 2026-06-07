@@ -50,9 +50,9 @@ namespace Laboration_2OOP
             _vm.Games.RegistreraCommand = new Kommando(() => OnRegisterGameClick(this, new RoutedEventArgs()));
             _vm.Events.SkapaCommand = new Kommando(() => OnCreateEventClick(this, new RoutedEventArgs()));
 
-            _state = Data.Skapa();
+            _state = Laboration_2OOP.DemoData.Data.Skapa();
 
-           
+
 
             _vm.Anmälningar.Medlemmar.Clear();
 
