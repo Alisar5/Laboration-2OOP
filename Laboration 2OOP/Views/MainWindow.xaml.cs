@@ -274,8 +274,6 @@ namespace Laboration_2OOP
                     db.SaveChanges();
                 }
 
-
-
                 Log("OK: Ny medlem registrerad.");
                 ClearMemberForm();
                 ReloadMembers();
@@ -311,36 +309,7 @@ namespace Laboration_2OOP
             }
         }
 
-        private void OnUpdateMemberClick(object sender, RoutedEventArgs e)
-        {
-            if (_vm.Members.SelectedMember == null)
-            {
-                Log("Välj en medlem i listan innan du uppdaterar.");
-                return;
-            }
-
-            try
-            {
-                int id = _vm.Members.SelectedMember.Id;
-
-                var info = new UpdateMemberInfo
-                {
-                    Förnamn = _vm.Members.FirstName,
-                    Efternamn = _vm.Members.LastName,
-                    Email = _vm.Members.Email,
-                    Telefon = _vm.Members.Phone
-                };
-
-                _state.Medlemmar.UppdateraMedlem(id, info);
-
-                Log($"OK: Medlem {id} uppdaterad.");
-                ReloadMembers();
-            }
-            catch (Exception ex)
-            {
-                Log("Fel (kontrollerat): " + ex.Message);
-            }
-        }
+       
 
 
         private void OnClearMemberFormClick(object sender, RoutedEventArgs e)
