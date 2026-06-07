@@ -564,20 +564,20 @@ namespace Laboration_2OOP
                     if (spel == null)
                         throw new Exception("Spelet hittades inte i databasen.");
 
-
                     var info = new UpdateGameInfo
-                {
-                    Titel = _vm.Games.GameTitle,
-                    Kategori = _vm.Games.SelectedCategory,
-                    MinAntalSpelare = min,
-                    MaxAntalSpelare = max,
-                    SpelTidMinuter = tid,
-                    Svårighetsgrad = _vm.Games.SelectedDifficulty,
-                    Beskrivning = _vm.Games.Description,
-                    Tillgänglighet = _vm.Games.SelectedAvailability
-                };
+                    {
+                        Titel = _vm.Games.GameTitle,
+                        Kategori = _vm.Games.SelectedCategory,
+                        MinAntalSpelare = min,
+                        MaxAntalSpelare = max,
+                        SpelTidMinuter = tid,
+                        Svårighetsgrad = _vm.Games.SelectedDifficulty,
+                        Beskrivning = _vm.Games.Description,
+                        Tillgänglighet = _vm.Games.SelectedAvailability
+                    };
 
-                _state.Spel.UppdateraSpel(id, info);
+
+                    _state.Spel.UppdateraSpel(id, info);
 
                 Log($"OK: Spel #{id} uppdaterat.");
                 ReloadGames();
