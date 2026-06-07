@@ -1,0 +1,39 @@
+﻿using Laboration_2OOP.DemoData;
+using Laboration_2OOP.Domän;
+using Laboration_2OOP.Requests;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Laboration_2OOP.Services
+{
+    public class MemberService
+    {
+        public List<Medlem> GetMembers(bool onlyActive)
+        {
+            using (var db = new AppDbContext())
+            {
+                return onlyActive
+                    ? db.Medlemmar.Where(m => m.Status == MedlemsStatus.Aktiv).ToList()
+                    : db.Medlemmar.ToList();
+            }
+        }
+
+        public void CreateMember(RegisterMemberInfo info)
+        {
+            using (var db = new AppDbContext())
+            {
+                db.Medlemmar.Add(new Medlem(
+                    0,
+                    info.Förnamn,
+                    info.Efternamn,
+                    info.Email,
+                    info.Telefon,
+                    info.Roll,
+                    info.Status,
+                    info.RegistreradDatum));
+
+                db.SaveChanges();
+            }
+        }
+    }
+}

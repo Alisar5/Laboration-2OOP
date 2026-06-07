@@ -1,6 +1,7 @@
 ﻿using Laboration_2OOP.DemoData;
 using Laboration_2OOP.Domän;
 using Laboration_2OOP.Requests;
+using Laboration_2OOP.Services;
 using Laboration_2OOP.ViewModels;
 using System;
 using System.Collections.ObjectModel;
@@ -29,6 +30,7 @@ namespace Laboration_2OOP
 
         private readonly ObservableCollection<UiMember> _members = new ObservableCollection<UiMember>();
         private readonly ObservableCollection<UiEvent> _events = new ObservableCollection<UiEvent>();
+        private readonly MemberService _memberService = new MemberService();
 
         private readonly MainViewModel _vm;
         public MainWindow()
@@ -441,10 +443,13 @@ namespace Laboration_2OOP
         {
             _vm.Events.AvailableGames.Clear();
 
-            foreach (var s in _state.Spel.Alla)
+            using (var db = new AppDbContext())
             {
-                var uiGame = new UiGame(s.SpelId, s.ToString());
-                _vm.Events.AvailableGames.Add(uiGame);
+                foreach (var s in db.Spel.ToList())
+                {
+                    var uiGame = new UiGame(s.SpelId, s.ToString());
+                    _vm.Events.AvailableGames.Add(uiGame);
+                }
             }
         }
         private void OnSelectedGamesChanged(object sender, SelectionChangedEventArgs e)     // nytt 
@@ -638,26 +643,20 @@ namespace Laboration_2OOP
         // Reload helpers
         private void ReloadMembers()
         {
-            using (var db = new AppDbContext())
+            var source = _memberService.GetMembers(_vm.Members.OnlyActiveMembers);
+
+            _members.Clear();
+            _vm.Members.MemberTexts.Clear();
+            _vm.Anmälningar.Medlemmar.Clear();
+
+            foreach (var m in source)
             {
-                var source = _vm.Members.OnlyActiveMembers
-                    ? db.Medlemmar.Where(m => m.Status == MedlemsStatus.Aktiv).ToList()
-                    : db.Medlemmar.ToList();
-
-                _members.Clear();
-                _vm.Members.MemberTexts.Clear();
-                _vm.Anmälningar.Medlemmar.Clear();
-
-                foreach (var m in source)
-                {
-                    var uiMember = new UiMember(m.MedlemsId, m.ToString());
-                    _members.Add(uiMember);
-                    _vm.Members.MemberTexts.Add(uiMember);
-                    _vm.Anmälningar.Medlemmar.Add(uiMember);
-                }
+                var uiMember = new UiMember(m.MedlemsId, m.ToString());
+                _members.Add(uiMember);
+                _vm.Members.MemberTexts.Add(uiMember);
+                _vm.Anmälningar.Medlemmar.Add(uiMember);
             }
         }
-
 
         private void ReloadEvents_UC1()
         {
