@@ -576,17 +576,22 @@ namespace Laboration_2OOP
                         Tillgänglighet = _vm.Games.SelectedAvailability
                     };
 
+                    spel.UppdateraInfo(info);
+                    spel.SättTillgänglighet(info.Tillgänglighet);
 
-                    _state.Spel.UppdateraSpel(id, info);
+                    db.SaveChanges();
+                }
 
                 Log($"OK: Spel #{id} uppdaterat.");
                 ReloadGames();
+                ReloadSpelLista_UC2();
             }
             catch (Exception ex)
             {
                 Log("Fel (kontrollerat): " + ex.Message);
             }
         }
+
 
         private void OnClearGameFormClick(object sender, RoutedEventArgs e)
         {
