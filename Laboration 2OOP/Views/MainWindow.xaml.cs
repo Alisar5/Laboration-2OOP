@@ -259,7 +259,21 @@ namespace Laboration_2OOP
                     RegistreradDatum = DateTime.Now
                 };
 
-                _state.Medlemmar.RegistreraNy(info);
+                using (var db = new AppDbContext())
+                {
+                    db.Medlemmar.Add(new Medlem(
+                        0,
+                        info.Förnamn,
+                        info.Efternamn,
+                        info.Email,
+                        info.Telefon,
+                        info.Roll,
+                        info.Status,
+                        info.RegistreradDatum));
+
+                    db.SaveChanges();
+                }
+
 
                 Log("OK: Ny medlem registrerad.");
                 ClearMemberForm();
@@ -699,10 +713,6 @@ namespace Laboration_2OOP
                 return spelträff.ToString() + arrangörText;
             }
         }
-
-
-
-
 
 
         private void ClearMemberForm()
