@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace Laboration_2OOP.ViewModels
 {
@@ -48,7 +49,13 @@ namespace Laboration_2OOP.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-
+        public ICommand? AnmälCommand { get; set; }
+        public ICommand? AvanmälCommand { get; set; }
+        public void InitCommands(Action enrollAction, Action unenrollAction)
+        {
+            AnmälCommand = new Kommando(enrollAction);
+            AvanmälCommand = new Kommando(unenrollAction);
+        }
 
 
     }

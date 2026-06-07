@@ -1,39 +1,71 @@
-﻿using Laboration_2OOP.DemoData;
+﻿
+using Laboration_2OOP.DemoData;
 using Laboration_2OOP.Domän;
-using Laboration_2OOP.Requests;
-using System.Collections.Generic;
+using System;
 using System.Linq;
+using System.Windows;
 
 namespace Laboration_2OOP.Services
 {
-    public class MemberService
+    public class EnrollmentService
     {
-        public List<Medlem> GetMembers(bool onlyActive)
+
+        public void EnrollMember(int memberId, int eventId)
         {
             using (var db = new AppDbContext())
             {
-                return onlyActive
-                    ? db.Medlemmar.Where(m => m.Status == MedlemsStatus.Aktiv).ToList()
-                    : db.Medlemmar.ToList();
-            }
-        }
+                var medlem = db.Medlemmar.FirstOrDefault(m => m.MedlemsId == memberId);
+                var träff = db.Träffar.FirstOrDefault(t => t.TräffId == eventId);
 
-        public void CreateMember(RegisterMemberInfo info)
-        {
-            using (var db = new AppDbContext())
-            {
-                db.Medlemmar.Add(new Medlem(
-                    0,
-                    info.Förnamn,
-                    info.Efternamn,
-                    info.Email,
-                    info.Telefon,
-                    info.Roll,
-                    info.Status,
-                    info.RegistreradDatum));
+                if (medlem == null)
+                    throw new Exception("Medlem hittades inte i databasen.");
 
+                if (träff == null)
+                    throw new Exception("Spelträffen hittades inte i databasen.");
+
+                träff.BokaPlats(medlem);
                 db.SaveChanges();
             }
         }
+
+        public void UnenrollMember(int memberId, int eventId)
+        {
+            using (var db = new AppDbContext())
+            {
+                var medlem = db.Medlemmar.FirstOrDefault(m => m.MedlemsId == memberId);
+                var träff = db.Träffar.FirstOrDefault(t => t.TräffId == eventId);
+
+                if (medlem == null)
+                    throw new Exception("Medlem hittades inte i databasen.");
+
+                if (träff == null)
+                    throw new Exception("Spelträffen hittades inte i databasen.");
+
+                träff.AvbokaPlats(medlem);
+                db.SaveChanges();
+            }
+        }
+        public List<string> GetParticipantsForEvent(int eventId)
+        {
+            using (var db = new AppDbContext())
+            {
+                var träff = db.Träffar.FirstOrDefault(t => t.TräffId == eventId);
+
+                if (träff == null)
+                    throw new Exception("Spelträffen hittades inte i databasen.");
+
+                var deltagarIds = träff.HämtaDeltagareIds();
+
+                return db.Medlemmar
+                    .Where(m => deltagarIds.Contains(m.MedlemsId))
+                    .ToList()
+                    .Select(m => m.ToString())
+                    .ToList();
+            }
+        }
+
+
+
     }
 }
+

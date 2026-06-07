@@ -1,13 +1,10 @@
 ﻿using Laboration_2OOP.Domän;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
+using Laboration_2OOP;
 
 namespace Laboration_2OOP.ViewModels
 {
@@ -16,7 +13,6 @@ namespace Laboration_2OOP.ViewModels
         public string SectionTitle { get; set; } = "Medlemmar";
 
         private string _firstName = "";
-
         public string FirstName
         {
             get => _firstName;
@@ -26,8 +22,8 @@ namespace Laboration_2OOP.ViewModels
                 OnPropertyChanged();
             }
         }
-        private string _lastName = "";
 
+        private string _lastName = "";
         public string LastName
         {
             get => _lastName;
@@ -37,8 +33,8 @@ namespace Laboration_2OOP.ViewModels
                 OnPropertyChanged();
             }
         }
-        private string _email = "";
 
+        private string _email = "";
         public string Email
         {
             get => _email;
@@ -50,7 +46,6 @@ namespace Laboration_2OOP.ViewModels
         }
 
         private string _phone = "";
-
         public string Phone
         {
             get => _phone;
@@ -60,8 +55,8 @@ namespace Laboration_2OOP.ViewModels
                 OnPropertyChanged();
             }
         }
-        private Roll _selectedRole;
 
+        private Roll _selectedRole;
         public Roll SelectedRole
         {
             get => _selectedRole;
@@ -74,17 +69,14 @@ namespace Laboration_2OOP.ViewModels
 
         public Roll[] AvailableRoles { get; set; } =
         {
-
-           Roll.Medlem,
-           Roll.Arrangör,
-           Roll.Administratör
+            Roll.Medlem,
+            Roll.Arrangör,
+            Roll.Administratör
         };
-
 
         public ObservableCollection<UiMember> MemberTexts { get; set; } = new ObservableCollection<UiMember>();
 
         private UiMember? _selectedMember;
-
         public UiMember? SelectedMember
         {
             get => _selectedMember;
@@ -95,15 +87,7 @@ namespace Laboration_2OOP.ViewModels
             }
         }
 
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
         private bool _onlyActiveMembers;
-
         public bool OnlyActiveMembers
         {
             get => _onlyActiveMembers;
@@ -113,9 +97,23 @@ namespace Laboration_2OOP.ViewModels
                 OnPropertyChanged();
             }
         }
+
         public ICommand? RensaCommand { get; set; }
         public ICommand? UppdateraCommand { get; set; }
         public ICommand? RegistreraCommand { get; set; }
-    }
 
+        public void InitCommands(Action registerAction, Action updateAction, Action clearAction)
+        {
+            RegistreraCommand = new Kommando(registerAction);
+            UppdateraCommand = new Kommando(updateAction);
+            RensaCommand = new Kommando(clearAction);
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
 }

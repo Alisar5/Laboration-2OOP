@@ -54,12 +54,12 @@
                         <Button Content="Anmäl"
                                 Height="35"
                                 Margin="0,0,0,10"
-                                Click="OnEnrollClick"/>
+                                Command="{Binding Anmälningar.AnmälCommand}"/>
 
                         <Button Content="Avanmäl"
                                 Height="35"
                                 Margin="0,0,0,20"
-                                Click="OnUnenrollClick"/>
+                                Command="{Binding Anmälningar.AvanmälCommand}"/>
 
                         <TextBlock Text="Status / Fel:" FontWeight="Bold"/>
                         <TextBox x:Name="StatusBox"

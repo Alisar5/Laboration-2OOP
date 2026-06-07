@@ -116,6 +116,12 @@ namespace Laboration_2OOP.ViewModels
         }
         public ICommand? SkapaCommand { get; set; }
 
+        public void InitCommands(Action createAction)
+        {
+            SkapaCommand = new Kommando(createAction);
+        }
+
+
 
 
     }

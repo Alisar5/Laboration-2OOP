@@ -150,5 +150,11 @@ namespace Laboration_2OOP.ViewModels
         public ICommand? UppdateraCommand { get; set; }
         public ICommand? RegistreraCommand { get; set; }
 
+        public void InitCommands(Action registerAction, Action updateAction, Action clearAction)
+        {
+            RegistreraCommand = new Kommando(registerAction);
+            UppdateraCommand = new Kommando(updateAction);
+            RensaCommand = new Kommando(clearAction);
+        }
     }
 }
