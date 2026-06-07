@@ -406,24 +406,29 @@ namespace Laboration_2OOP
                 string tema = "";
 
                 // Skapa träff
-                var info = new CreateEventInfo
+
+                using (var db = new AppDbContext())
                 {
-                    StartTid = start,
-                    Plats = plats,
-                    AktivitetTyp = typ,
-                    MaxAntalDeltagare = max,
-                    MinAntalDeltagare = minAntal,
-                    Tema = tema,
-                    AnsvarigArrangorId = ansvarigArrangorId,
-                    ValdaSpel = valdaSpel
-                };
+                    var ny = new Spelträff(
+                        0,
+                        start,
+                        plats,
+                        typ,
+                        tema,
+                        max,
+                        minAntal,
+                        ansvarigArrangorId,
+                        new IdGenerator());
 
-                var ny = _state.Träffar.SkapaNyTräff(info);
+                    db.Träffar.Add(ny);
+                    db.SaveChanges();
 
-                Log($"OK: Spelträff skapad. (id={ny.TräffId}, start={ny.StartTid:yyyy-MM-dd HH:mm})");
+                    Log($"OK: Spelträff skapad. (id={ny.TräffId}, start={ny.StartTid:yyyy-MM-dd HH:mm})");
+                }
 
                 ReloadEvents_UC2();
                 ReloadEvents_UC1();
+
             }
             catch (Exception ex)
             {
