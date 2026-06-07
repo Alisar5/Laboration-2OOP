@@ -335,6 +335,16 @@ namespace Laboration_2OOP
                     db.SaveChanges();
                 }
 
+                Log($"OK: Medlem {id} uppdaterad.");
+                ReloadMembers();
+            }
+            catch (Exception ex)
+            {
+                Log("Fel (kontrollerat): " + ex.Message);
+            }
+        }
+
+
 
 
         private void OnClearMemberFormClick(object sender, RoutedEventArgs e)
