@@ -683,13 +683,12 @@ namespace Laboration_2OOP
         }
 
 
+
         private string FormateraSpelträffText(Spelträff spelträff)
         {
-            var arrangör = _state.Medlemmar.Hämta(spelträff.AnsvarigArrangorId);
-            string arrangörText = $" | Arrangör: {arrangör}";
+            using (var db = new AppDbContext())
 
-            return spelträff.ToString() + arrangörText;
-        }
+           
 
         private void ClearMemberForm()
         {
