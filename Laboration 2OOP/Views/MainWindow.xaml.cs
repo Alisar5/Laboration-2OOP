@@ -611,18 +611,24 @@ namespace Laboration_2OOP
 
         private void ReloadEvents_UC1()
         {
-            var source = _state.Träffar.KommandeSorteradeEfterDatum();
-
-            _events.Clear();
-            _vm.Anmälningar.Spelträffar.Clear();
-
-            foreach (var t in source)
+            using (var db = new AppDbContext())
             {
-                var uiEvent = new UiEvent(t.TräffId, FormateraSpelträffText(t));
-                _events.Add(uiEvent);
-                _vm.Anmälningar.Spelträffar.Add(uiEvent);
+                var source = db.Träffar
+                    .OrderBy(t => t.StartTid)
+                    .ToList();
+
+                _events.Clear();
+                _vm.Anmälningar.Spelträffar.Clear();
+
+                foreach (var t in source)
+                {
+                    var uiEvent = new UiEvent(t.TräffId, FormateraSpelträffText(t));
+                    _events.Add(uiEvent);
+                    _vm.Anmälningar.Spelträffar.Add(uiEvent);
+                }
             }
         }
+
 
 
         private void ReloadEvents_UC2()
