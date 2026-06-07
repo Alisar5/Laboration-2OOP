@@ -692,6 +692,16 @@ namespace Laboration_2OOP
                 var arrangör = db.Medlemmar.FirstOrDefault(m => m.MedlemsId == spelträff.AnsvarigArrangorId);
 
 
+                string arrangörText = arrangör != null
+                           ? $" | Arrangör: {arrangör}"
+                           : " | Arrangör: okänd";
+
+                return spelträff.ToString() + arrangörText;
+            }
+        }
+
+
+
 
 
 
