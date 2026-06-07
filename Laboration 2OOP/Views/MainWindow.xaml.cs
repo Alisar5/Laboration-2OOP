@@ -511,6 +511,24 @@ namespace Laboration_2OOP
                     Tillgänglighet = _vm.Games.SelectedAvailability
                 };
 
+                using (var db = new AppDbContext())
+                {
+                    var nyttSpel = new Spel(
+                        0,
+                        info.Titel,
+                        info.Kategori,
+                        info.MinAntalSpelare,
+                        info.MaxAntalSpelare,
+                        info.SpelTidMinuter,
+                        info.Svårighetsgrad,
+                        info.Beskrivning);
+
+                    nyttSpel.SättTillgänglighet(info.Tillgänglighet);
+
+                    db.Spel.Add(nyttSpel);
+                    db.SaveChanges();
+                }
+
 
                 var nytt = _state.Spel.RegistreraNyttSpel(info);
 
