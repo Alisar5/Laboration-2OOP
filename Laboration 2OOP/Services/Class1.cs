@@ -22,12 +22,16 @@ namespace Laboration_2OOP.Services
                 if (träff == null)
                     throw new Exception("Spelträffen hittades inte i databasen.");
 
+                // NYT TILLÄGG: medlem måste vara aktiv
+                if (medlem.Status != MedlemsStatus.Aktiv)
+                    throw new Exception("Endast aktiva medlemmar får anmälas till en spelträff.");
+
                 // Hämta relevanta anmälningar först från databasen
                 var träffensAnmälningar = db.Anmälningar
                     .Where(a => a.SpelträffId == eventId)
                     .ToList();
 
-                // Sedan använd ArAktiv i minnet
+                // Kontrollera om medlemmen redan är anmäld
                 bool redanAnmäld = träffensAnmälningar.Any(a =>
                     a.MedlemId == memberId &&
                     a.ArAktiv);
@@ -35,6 +39,7 @@ namespace Laboration_2OOP.Services
                 if (redanAnmäld)
                     throw new Exception("Medlemmen är redan anmäld till spelträffen.");
 
+                // Kontrollera lediga platser
                 int aktivaAnmälningar = träffensAnmälningar.Count(a => a.ArAktiv);
 
                 if (aktivaAnmälningar >= träff.MaxAntalDeltagare)

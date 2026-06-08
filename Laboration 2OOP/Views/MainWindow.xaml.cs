@@ -37,34 +37,12 @@ namespace Laboration_2OOP
             _vm = new MainViewModel();
             DataContext = _vm;
 
-            
+
         }
         // UC1: Anmäl / Avanmäl
 
-       
+
     }
 
-    public class UiMember
-    {
-        public int Id { get; }
-        public string DisplayText { get; }
-        public UiMember(int id, string text) { Id = id; DisplayText = text; }
-    }
 
-    public class UiEvent
-    {
-        public int Id { get; }
-        public string DisplayText { get; }
-        public UiEvent(int id, string text) { Id = id; DisplayText = text; }
-    }
-
-    public class UiGame
-    {
-        public int Id { get; }
-        public string DisplayText { get; }
-        public UiGame(int id, string text) { Id = id; DisplayText = text; }
-        public override string ToString() => DisplayText;
-    }
 }
-        
-    
