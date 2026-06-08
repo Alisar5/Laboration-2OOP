@@ -9,6 +9,7 @@ namespace Laboration_2OOP.Domän
 {
     public class Spelträff
     {
+        
         public int TräffId { get; private set; }
         public DateTime StartTid { get; private set; }
         public string Plats { get; private set; }
@@ -21,13 +22,16 @@ namespace Laboration_2OOP.Domän
         public int AnsvarigArrangorId { get; private set; }
 
 
-        private readonly List<Anmälan> _anmälningar = new List<Anmälan>();
+        private List<Anmälan> _anmälningar = new List<Anmälan>();
         private readonly List<Spel> _spel = new List<Spel>();
-        private readonly IdGenerator _anmälanIdGen;
+        private IdGenerator _anmälanIdGen = new IdGenerator(1);
+
 
         private Spelträff()
         {
         }
+
+        
 
 
         public Spelträff(int träffId, DateTime startTid, string plats, AktivitetTyp typ, string tema, int maxAntalDeltagare, int minAntalDeltagare, int ansvarigArrangorId, IdGenerator anmälanIdGen)
@@ -46,9 +50,12 @@ namespace Laboration_2OOP.Domän
             Validera();
         }
 
+
         //UC: Anmäl
         public void BokaPlats(Medlem medlem)
         {
+            
+
             if (medlem == null) throw new ValideringsException("Medlem saknas.");
 
             if (!medlem.ArAktiv())

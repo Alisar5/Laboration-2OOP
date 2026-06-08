@@ -39,10 +39,10 @@
 
                     <GroupBox Header="Spelträffar (kommande)" Grid.Column="1" Margin="0,0,10,0">
                         <ListBox x:Name="EventsList_UC1"
-                                 ItemsSource="{Binding Anmälningar.Spelträffar}"
-                                 SelectedItem="{Binding Anmälningar.ValdSpelträff}"
-                                 DisplayMemberPath="DisplayText"
-                                 SelectionChanged="OnEventSelected_UC1"/>
+                               ItemsSource="{Binding Anmälningar.Spelträffar}"
+                               SelectedItem="{Binding Anmälningar.ValdSpelträff}"
+                                           DisplayMemberPath="DisplayText" />
+                        
                     </GroupBox>
 
                     <GroupBox Header="Deltagare (vald träff)" Grid.Column="2" Margin="0,0,10,0">
@@ -62,8 +62,9 @@
                                 Command="{Binding Anmälningar.AvanmälCommand}"/>
 
                         <TextBlock Text="Status / Fel:" FontWeight="Bold"/>
-                        <TextBox x:Name="StatusBox"
-                                 Height="360"
+                        <TextBox 
+                                Height="360"
+                                 Text="{Binding StatusMessage}"
                                  IsReadOnly="True"
                                  TextWrapping="Wrap"
                                  AcceptsReturn="True"/>
@@ -86,8 +87,7 @@
                         <Button Content="Uppdatera lista (LINQ-sort lediga platser)"
                                 Height="35"
                                 Margin="0,0,0,10"
-                                Click="OnRefreshEventsClick"/>
-
+                                Command="{Binding Events.RefreshCommand}"/>
                         <ListBox x:Name="EventsList_UC2"
                                  ItemsSource="{Binding Events.EventTexts}"
                                  SelectedItem="{Binding Events.SelectedEvent}"
@@ -121,14 +121,13 @@
                                       DisplayMemberPath="DisplayText"/>
 
                             <TextBlock Text="Spel:"/>
-                            <ListBox x:Name="SpelList_UC2" 
-                                     ItemsSource="{Binding Events.AvailableGames}" 
-                                     SelectionChanged="OnSelectedGamesChanged" Margin="0,0,0,8"
-                                       Height="100"
-                                       SelectionMode="Multiple"
-                                       DisplayMemberPath="DisplayText"/>
-
-
+                            <ListBox x:Name="SpelList_UC2"
+         ItemsSource="{Binding Events.AvailableGames}"
+         local:ListBoxSelectedItemsBehavior.BoundSelectedItems="{Binding Events.SelectedGames}"
+         Margin="0,0,0,8"
+         Height="100"
+         SelectionMode="Multiple"
+         DisplayMemberPath="DisplayText"/>
 
 
                             <Button Content="Skapa spelträff"
@@ -236,9 +235,11 @@
                         <Button Content="Visa spel grupperade efter kategori (LINQ-group)"
                                 Height="35"
                                 Margin="0,10,0,0"
-                                Click="OnGroupGamesClick"/>
+                                Command="{Binding Games.GrupperaCommand}"/>
 
-                        <ListBox x:Name="GroupedGamesList" Height="130" Margin="0,10,0,0"/>
+
+                        <ListBox x:Name="GroupedGamesList"
+                                 ItemsSource="{Binding Games.GroupedGames}" Height="130" Margin="0,10,0,0"/>
                     </StackPanel>
 
                     <GroupBox Header="Registrera / Uppdatera spel" Grid.Column="1">

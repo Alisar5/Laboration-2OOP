@@ -14,7 +14,7 @@ namespace Laboration_2OOP.DemoData
         public DbSet<Medlem> Medlemmar { get; set; }
         public DbSet<Spel> Spel { get; set; }
         public DbSet<Spelträff> Träffar { get; set; }
-
+        public DbSet<Anmälan> Anmälningar { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(
@@ -26,7 +26,9 @@ namespace Laboration_2OOP.DemoData
             modelBuilder.Entity<Medlem>().HasKey(m => m.MedlemsId);
             modelBuilder.Entity<Spel>().HasKey(s => s.SpelId);
             modelBuilder.Entity<Spelträff>().HasKey(t => t.TräffId);
+            modelBuilder.Entity<Anmälan>().HasKey(a => a.AnmälanId);
         }
+
     }
 }
 

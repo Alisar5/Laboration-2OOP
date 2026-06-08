@@ -98,7 +98,7 @@ namespace Laboration_2OOP.ViewModels
         public ObservableCollection<UiGame> SelectedGames { get; set; } = new ObservableCollection<UiGame>();
 
         public ICommand? SkapaCommand { get; set; }
-
+        public ICommand? RefreshCommand { get; set; }
         public void Init(EventService eventService, Action<string> logAction, Action syncToUc1Action)
         {
             _eventService = eventService;
@@ -106,6 +106,8 @@ namespace Laboration_2OOP.ViewModels
             _syncToUc1Action = syncToUc1Action;
 
             SkapaCommand = new Kommando(CreateEvent);
+            RefreshCommand = new Kommando(RefreshEvents);
+
 
             SelectedEventType = AvailableEventTypes[0];
 
@@ -113,7 +115,11 @@ namespace Laboration_2OOP.ViewModels
             LoadAvailableGames();
             LoadAvailableOrganizers();
         }
-
+        private void RefreshEvents()
+        {
+            LoadEvents();
+            _logAction?.Invoke("Uppdaterade spelträffar.");
+        }
         public void LoadEvents()
         {
             if (_eventService == null) return;

@@ -18,6 +18,7 @@ namespace Laboration_2OOP.Domän
 
         public AnmälanStatus status { get; private set; }
 
+
         public bool ArAktiv => status == AnmälanStatus.Aktiv;
 
         public Anmälan(int anmälanId, int medlemId, int spelträffId)

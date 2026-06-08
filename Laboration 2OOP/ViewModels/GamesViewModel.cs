@@ -20,6 +20,8 @@ namespace Laboration_2OOP.ViewModels
         public string SectionTitle { get; set; } = "Spel";
 
         public ObservableCollection<UiGame> GameTexts { get; set; } = new ObservableCollection<UiGame>();
+        public ObservableCollection<string> GroupedGames { get; set; } = new ObservableCollection<string>();
+        
 
         private UiGame? _selectedGame;
         public UiGame? SelectedGame
@@ -151,6 +153,7 @@ namespace Laboration_2OOP.ViewModels
         public ICommand? RensaCommand { get; set; }
         public ICommand? UppdateraCommand { get; set; }
         public ICommand? RegistreraCommand { get; set; }
+        public ICommand? GrupperaCommand { get; set; }
 
         public void Init(GameService gameService, Action<string> logAction, Action refreshUc2GamesAction)
         {
@@ -161,6 +164,7 @@ namespace Laboration_2OOP.ViewModels
             RegistreraCommand = new Kommando(RegisterGame);
             UppdateraCommand = new Kommando(UpdateGame);
             RensaCommand = new Kommando(ClearForm);
+            GrupperaCommand = new Kommando(GroupGamesByCategory);
 
             SelectedCategory = AvailableCategories[0];
             SelectedDifficulty = AvailableDifficulties[0];
@@ -181,6 +185,30 @@ namespace Laboration_2OOP.ViewModels
             {
                 GameTexts.Add(new UiGame(s.SpelId, s.ToString()));
             }
+        }
+        private void GroupGamesByCategory()
+        {
+            if (_gameService == null) return;
+
+            var source = _gameService.GetGames();
+
+            GroupedGames.Clear();
+
+            var grupper = source
+                .GroupBy(s => s.Kategori)
+                .OrderBy(g => g.Key.ToString());
+
+            foreach (var grp in grupper)
+            {
+                GroupedGames.Add("== " + grp.Key + " ==");
+
+                foreach (var spel in grp)
+                {
+                    GroupedGames.Add("  - " + spel);
+                }
+            }
+
+            _logAction?.Invoke("Visar spel grupperade efter kategori (LINQ-group).");
         }
 
         private void LoadSelectedGameIntoForm(int id)
@@ -298,5 +326,7 @@ namespace Laboration_2OOP.ViewModels
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
     }
+
 }

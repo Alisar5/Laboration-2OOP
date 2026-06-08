@@ -2,14 +2,13 @@
 using Laboration_2OOP.DemoData;
 using Laboration_2OOP.Domän;
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
 
 namespace Laboration_2OOP.Services
 {
     public class EnrollmentService
     {
-
         public void EnrollMember(int memberId, int eventId)
         {
             using (var db = new AppDbContext())
@@ -23,7 +22,25 @@ namespace Laboration_2OOP.Services
                 if (träff == null)
                     throw new Exception("Spelträffen hittades inte i databasen.");
 
-                träff.BokaPlats(medlem);
+                // Hämta relevanta anmälningar först från databasen
+                var träffensAnmälningar = db.Anmälningar
+                    .Where(a => a.SpelträffId == eventId)
+                    .ToList();
+
+                // Sedan använd ArAktiv i minnet
+                bool redanAnmäld = träffensAnmälningar.Any(a =>
+                    a.MedlemId == memberId &&
+                    a.ArAktiv);
+
+                if (redanAnmäld)
+                    throw new Exception("Medlemmen är redan anmäld till spelträffen.");
+
+                int aktivaAnmälningar = träffensAnmälningar.Count(a => a.ArAktiv);
+
+                if (aktivaAnmälningar >= träff.MaxAntalDeltagare)
+                    throw new Exception("Träffen är fullbokad.");
+
+                db.Anmälningar.Add(new Anmälan(0, memberId, eventId));
                 db.SaveChanges();
             }
         }
@@ -32,29 +49,30 @@ namespace Laboration_2OOP.Services
         {
             using (var db = new AppDbContext())
             {
-                var medlem = db.Medlemmar.FirstOrDefault(m => m.MedlemsId == memberId);
-                var träff = db.Träffar.FirstOrDefault(t => t.TräffId == eventId);
+                var relevanta = db.Anmälningar
+                    .Where(a => a.MedlemId == memberId && a.SpelträffId == eventId)
+                    .ToList();
 
-                if (medlem == null)
-                    throw new Exception("Medlem hittades inte i databasen.");
+                var anmälan = relevanta.FirstOrDefault(a => a.ArAktiv);
 
-                if (träff == null)
-                    throw new Exception("Spelträffen hittades inte i databasen.");
+                if (anmälan == null)
+                    throw new Exception("Medlemmen är inte anmäld till spelträffen.");
 
-                träff.AvbokaPlats(medlem);
+                anmälan.Avanmälan();
                 db.SaveChanges();
             }
         }
+
         public List<string> GetParticipantsForEvent(int eventId)
         {
             using (var db = new AppDbContext())
             {
-                var träff = db.Träffar.FirstOrDefault(t => t.TräffId == eventId);
-
-                if (träff == null)
-                    throw new Exception("Spelträffen hittades inte i databasen.");
-
-                var deltagarIds = träff.HämtaDeltagareIds();
+                var deltagarIds = db.Anmälningar
+                    .Where(a => a.SpelträffId == eventId)
+                    .ToList()
+                    .Where(a => a.ArAktiv)
+                    .Select(a => a.MedlemId)
+                    .ToList();
 
                 return db.Medlemmar
                     .Where(m => deltagarIds.Contains(m.MedlemsId))
@@ -63,9 +81,5 @@ namespace Laboration_2OOP.Services
                     .ToList();
             }
         }
-
-
-
     }
 }
-
