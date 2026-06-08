@@ -1,9 +1,7 @@
 ﻿
 using Laboration_2OOP.DemoData;
 using Laboration_2OOP.Domän;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+
 
 namespace Laboration_2OOP.Services
 {

@@ -1,10 +1,7 @@
 ﻿
     using global::Laboration_2OOP.DemoData;
     using global::Laboration_2OOP.Domän;
-    using Laboration_2OOP.Requests;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
+
 
     namespace Laboration_2OOP.Services
     {
