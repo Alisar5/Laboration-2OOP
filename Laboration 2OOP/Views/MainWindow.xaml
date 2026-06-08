@@ -153,17 +153,15 @@
 
                     <StackPanel Grid.Column="0" Margin="0,0,10,0">
                         <CheckBox x:Name="OnlyActiveCheckbox"
-                               Content="Visa endast aktiva (LINQ-filter)"
-                               IsChecked="{Binding Members.OnlyActiveMembers}"
-                                     Margin="0,0,0,10"
-                                    Checked="OnActiveFilterChanged"
-                                       Unchecked="OnActiveFilterChanged"/>
+                            Content="Visa endast aktiva (LINQ-filter)"
+                             IsChecked="{Binding Members.OnlyActiveMembers}"
+                                      Margin="0,0,0,10"/>
                         <ListBox x:Name="MembersList_UC3"
-                         ItemsSource="{Binding Members.MemberTexts}"
-                             SelectedItem="{Binding Members.SelectedMember}"
-                            DisplayMemberPath="DisplayText"
-                            Height="420"
-                             SelectionChanged="OnMemberSelectedForEdit"/>
+                              ItemsSource="{Binding Members.MemberTexts}"
+                              SelectedItem="{Binding Members.SelectedMember}"
+                               DisplayMemberPath="DisplayText"
+                                 Height="420"/>
+
                     </StackPanel>
 
                     <GroupBox Header="Registrera / Uppdatera medlem" Grid.Column="1">
@@ -233,8 +231,7 @@
                         <ListBox x:Name="AllGamesList"
                                  ItemsSource="{Binding Games.GameTexts}"
                                  SelectedItem="{Binding Games.SelectedGame}"
-                                 Height="420"
-                                 SelectionChanged="OnGameSelectedForEdit"/>
+                                 Height="420"/>
 
                         <Button Content="Visa spel grupperade efter kategori (LINQ-group)"
                                 Height="35"

@@ -47,18 +47,14 @@ namespace Laboration_2OOP
             _vm = new MainViewModel();
             DataContext = _vm;
 
-            _vm.Members.InitCommands(
-     () => OnRegisterMemberClick(this, new RoutedEventArgs()),
-     () => OnUpdateMemberClick(this, new RoutedEventArgs()),
-     () => ClearMemberForm());
+            _vm.Members.Init(_memberService, Log, SyncMembersToAnmalningar);
 
-            _vm.Games.InitCommands(
-     () => OnRegisterGameClick(this, new RoutedEventArgs()),
-     () => OnUpdateGameClick(this, new RoutedEventArgs()),
-     () => ClearGameForm());
 
-            _vm.Events.InitCommands(
-    () => OnCreateEventClick(this, new RoutedEventArgs()));
+            _vm.Games.Init(_gameService, Log, _vm.Events.LoadAvailableGames);
+
+
+            _vm.Events.Init(_eventService, Log, SyncEventsToUc1);
+
 
             _vm.Anmälningar.InitCommands(
     () => OnEnrollClick(this, new RoutedEventArgs()),
@@ -104,17 +100,39 @@ namespace Laboration_2OOP
             _vm.Members.SelectedRole = Roll.Medlem;
 
 
-            ReloadMembers();
-            ReloadEvents_UC1();
-            ReloadEvents_UC2();
-            ReloadGames();
-            ReloadSpelLista_UC2();
-            ReloadArrangorCombo_UC2();
-
+            
+            
+            
             Log("Startad. UC1: välj medlem + spelträff och klicka Anmäl/Avanmäl.");
         }
-        // UC1: Anmäl / Avanmäl
 
+
+        // UC1: Anmäl / Avanmäl
+        private void SyncMembersToAnmalningar()
+        {
+            _vm.Anmälningar.Medlemmar.Clear();
+
+            foreach (var uiMember in _vm.Members.MemberTexts)
+            {
+                _vm.Anmälningar.Medlemmar.Add(uiMember);
+            }
+        }
+        private void SyncEventsToUc1()
+        {
+            _events.Clear();
+            _vm.Anmälningar.Spelträffar.Clear();
+
+            foreach (var uiEvent in _vm.Events.EventTexts)
+            {
+                _events.Add(uiEvent);
+                _vm.Anmälningar.Spelträffar.Add(uiEvent);
+            }
+        }
+
+        private void OnEventSelected_UC1(object sender, SelectionChangedEventArgs e)
+        {
+            ReloadParticipantsForSelectedEvent();
+        }
         private void OnEnrollClick(object sender, RoutedEventArgs e)
         {
             var m = _vm.Anmälningar.ValdMedlem;
@@ -132,7 +150,8 @@ namespace Laboration_2OOP
 
                 Log("OK: Medlem anmäld till spelträff.");
 
-                ReloadEvents_UC1();
+                _vm.Events.LoadEvents();
+
                 ReloadParticipantsForSelectedEvent();
             }
             catch (Exception ex)
@@ -158,7 +177,8 @@ namespace Laboration_2OOP
 
                 Log("OK: Medlem avanmäld från spelträff.");
 
-                ReloadEvents_UC1();
+                _vm.Events.LoadEvents();
+
                 ReloadParticipantsForSelectedEvent();
             }
             catch (Exception ex)
@@ -203,176 +223,6 @@ namespace Laboration_2OOP
 
 
        
-
-        // UC3: Registrera / Uppdatera medlem
-
-        private void OnRegisterMemberClick(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var roll = _vm.Members.SelectedRole;
-
-                var info = new RegisterMemberInfo
-                {
-                    Förnamn = _vm.Members.FirstName,
-                    Efternamn = _vm.Members.LastName,
-                    Email = _vm.Members.Email,
-                    Telefon = _vm.Members.Phone,
-                    Roll = roll,
-                    Status = MedlemsStatus.Aktiv,
-                    RegistreradDatum = DateTime.Now
-                };
-
-                _memberService.CreateMember(info);
-
-                Log("OK: Ny medlem registrerad.");
-                ClearMemberForm();
-                ReloadMembers();
-            }
-            catch (Exception ex)
-            {
-                Log("Fel (kontrollerat): " + ex.Message);
-            }
-        }
-
-
-
-        private void OnMemberSelectedForEdit(object sender, SelectionChangedEventArgs e)
-        {
-            var uiMember = _vm.Members.SelectedMember;
-            if (uiMember == null) return;
-
-            try
-            {
-                var medlem = _memberService.GetMemberById(uiMember.Id);
-
-                if (medlem == null)
-                    throw new Exception("Medlem hittades inte i databasen.");
-
-                _vm.Members.FirstName = medlem.Förnamn;
-                _vm.Members.LastName = medlem.Efternamn;
-                _vm.Members.Email = medlem.Email;
-                _vm.Members.Phone = medlem.Telefon;
-                _vm.Members.SelectedRole = medlem.Roll;
-
-                Log($"Redigerar medlem {medlem.MedlemsId}.");
-            }
-            catch (Exception ex)
-            {
-                Log("Fel: " + ex.Message);
-            }
-        }
-
-
-        private void OnUpdateMemberClick(object sender, RoutedEventArgs e)
-        {
-            if (_vm.Members.SelectedMember == null)
-            {
-                Log("Välj en medlem i listan innan du uppdaterar.");
-                return;
-            }
-
-            try
-            {
-                int id = _vm.Members.SelectedMember.Id;
-
-                var info = new UpdateMemberInfo
-                {
-                    Förnamn = _vm.Members.FirstName,
-                    Efternamn = _vm.Members.LastName,
-                    Email = _vm.Members.Email,
-                    Telefon = _vm.Members.Phone
-                };
-
-                _memberService.UpdateMember(id, info);
-
-                Log($"OK: Medlem {id} uppdaterad.");
-                ReloadMembers();
-            }
-            catch (Exception ex)
-            {
-                Log("Fel (kontrollerat): " + ex.Message);
-            }
-        }
-
-
-       
-        private void OnActiveFilterChanged(object sender, RoutedEventArgs e)
-        {
-            ReloadMembers();
-        }
-        // UC2: Skapa spelträff
-
-        private void OnCreateEventClick(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                if (_vm.Events.SelectedDate == null)
-                    throw new ValideringsException("Datum måste väljas.");
-
-                DateTime date = _vm.Events.SelectedDate.Value.Date;
-
-                if (!DateTime.TryParseExact(_vm.Events.TimeText.Trim(), "HH:mm",
-                                            CultureInfo.InvariantCulture,
-                                            DateTimeStyles.None, out DateTime timePart))
-                    throw new ValideringsException("Tid måste vara i format HH:mm (t.ex. 18:00).");
-
-                DateTime start = date.AddHours(timePart.Hour).AddMinutes(timePart.Minute);
-
-                string plats = (_vm.Events.PlaceText ?? "").Trim();
-                if (string.IsNullOrWhiteSpace(plats))
-                    throw new ValideringsException("Plats måste anges.");
-
-
-                var valdArrangor = _vm.Events.SelectedOrganizer;
-
-                if (valdArrangor == null)
-                    throw new ValideringsException("Välj en arrangör.");
-
-                int ansvarigArrangorId = valdArrangor.Id;
-
-               
-                int max = 4;
-                int minAntal = 0;
-
-                // Aktivitetstyp väljs av arrangören
-
-                var typ = _vm.Events.SelectedEventType;
-
-
-
-                // Ingen tema alls
-                // Ingen tema alls
-                string tema = "";
-
-                // Skapa träff
-
-                _eventService.CreateEvent(start, plats, typ, max, minAntal, tema, ansvarigArrangorId);
-
-                Log("OK: Spelträff skapad.");
-
-                ReloadEvents_UC2();
-                ReloadEvents_UC1();
-
-            }
-            catch (Exception ex)
-            {
-                Log("Fel (kontrollerat): " + ex.Message);
-            }
-        }
-
-
-        private void ReloadSpelLista_UC2()
-        {
-            _vm.Events.AvailableGames.Clear();
-
-            var source = _eventService.GetAvailableGamesForUc2();
-
-            foreach (var uiGame in source)
-            {
-                _vm.Events.AvailableGames.Add(uiGame);
-            }
-        }
         private void OnSelectedGamesChanged(object sender, SelectionChangedEventArgs e)     // nytt 
         {
             _vm.Events.SelectedGames.Clear();
@@ -387,129 +237,12 @@ namespace Laboration_2OOP
 
         private void OnRefreshEventsClick(object sender, RoutedEventArgs e)
         {
-            ReloadEvents_UC2();
-            Log("Uppdaterade spelträffar (LINQ-sort lediga platser).");
+            _vm.Events.LoadEvents();
+            Log("Uppdaterade spelträffar.");
         }
+
 
         // Spel: Registrera / Uppdatera
-        private void OnGameSelectedForEdit(object sender, SelectionChangedEventArgs e)
-        {
-            var uiGame = _vm.Games.SelectedGame;
-            if (uiGame == null) return;
-
-            try
-            {
-                var spel = _gameService.GetGameById(uiGame.Id);
-
-                if (spel == null)
-                    throw new Exception("Spelet hittades inte i databasen.");
-
-                _vm.Games.GameTitle = spel.Titel;
-                _vm.Games.SelectedCategory = spel.Kategori;
-                _vm.Games.MinPlayers = spel.MinAntalSpelare.ToString();
-                _vm.Games.MaxPlayers = spel.MaxAntalSpelare.ToString();
-                _vm.Games.GameTime = spel.SpelTidMinuter.ToString();
-                _vm.Games.SelectedDifficulty = spel.Svårighetsgrad;
-                _vm.Games.SelectedAvailability = spel.Tillgänglig;
-                _vm.Games.Description = spel.Beskrivning;
-
-                Log($"Redigerar spel #{spel.SpelId}.");
-            }
-            catch (Exception ex)
-            {
-                Log("Fel (kontrollerat): " + ex.Message);
-            }
-        }
-
-        private void OnRegisterGameClick(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                int min = int.Parse(_vm.Games.MinPlayers.Trim());
-                int max = int.Parse(_vm.Games.MaxPlayers.Trim());
-                int tid = int.Parse(_vm.Games.GameTime.Trim());
-
-                var info = new CreateGameInfo
-                {
-                    Titel = _vm.Games.GameTitle,
-                    Kategori = _vm.Games.SelectedCategory,
-                    MinAntalSpelare = min,
-                    MaxAntalSpelare = max,
-                    SpelTidMinuter = tid,
-                    Svårighetsgrad = _vm.Games.SelectedDifficulty,
-                    Beskrivning = _vm.Games.Description,
-                    Tillgänglighet = _vm.Games.SelectedAvailability
-                };
-
-                _gameService.CreateGame(info);
-
-                Log("OK: Spel registrerat.");
-                ClearGameForm();
-                ReloadGames();
-                ReloadSpelLista_UC2();
-            }
-            catch (Exception ex)
-            {
-                Log("Fel (kontrollerat): " + ex.Message);
-            }
-        }
-        private void OnUpdateGameClick(object sender, RoutedEventArgs e)
-        {
-            if (_vm.Games.SelectedGame == null)
-            {
-                Log("Välj ett spel i listan innan du uppdaterar.");
-                return;
-            }
-
-            try
-            {
-                int id = _vm.Games.SelectedGame.Id;
-
-                int min = int.Parse(_vm.Games.MinPlayers.Trim());
-                int max = int.Parse(_vm.Games.MaxPlayers.Trim());
-                int tid = int.Parse(_vm.Games.GameTime.Trim());
-
-                var info = new UpdateGameInfo
-                {
-                    Titel = _vm.Games.GameTitle,
-                    Kategori = _vm.Games.SelectedCategory,
-                    MinAntalSpelare = min,
-                    MaxAntalSpelare = max,
-                    SpelTidMinuter = tid,
-                    Svårighetsgrad = _vm.Games.SelectedDifficulty,
-                    Beskrivning = _vm.Games.Description,
-                    Tillgänglighet = _vm.Games.SelectedAvailability
-                };
-
-                _gameService.UpdateGame(id, info);
-
-                Log($"OK: Spel #{id} uppdaterat.");
-                ReloadGames();
-                ReloadSpelLista_UC2();
-            }
-            catch (Exception ex)
-            {
-                Log("Fel (kontrollerat): " + ex.Message);
-            }
-        }
-
-
-
-        private void ClearGameForm()
-        {
-            AllGamesList.SelectedItem = null;
-
-            _vm.Games.GameTitle = "";
-            _vm.Games.MinPlayers = "";
-            _vm.Games.MaxPlayers = "";
-            _vm.Games.GameTime = "";
-            _vm.Games.Description = "";
-
-            _vm.Games.SelectedCategory = _vm.Games.AvailableCategories[0];
-            _vm.Games.SelectedDifficulty = _vm.Games.AvailableDifficulties[0];
-            _vm.Games.SelectedAvailability = _vm.Games.AvailableAvailabilities[0];
-        }
-
 
         // LINQ group: spel per kategori
         private void OnGroupGamesClick(object sender, RoutedEventArgs e)
@@ -527,99 +260,8 @@ namespace Laboration_2OOP
         }
 
         // Reload helpers
-        private void ReloadMembers()
-        {
-            var source = _memberService.GetMembers(_vm.Members.OnlyActiveMembers);
-
-            
-            _vm.Members.MemberTexts.Clear();
-            _vm.Anmälningar.Medlemmar.Clear();
-
-            foreach (var m in source)
-            {
-                var uiMember = new UiMember(m.MedlemsId, m.ToString());
-           
-                _vm.Members.MemberTexts.Add(uiMember);
-                _vm.Anmälningar.Medlemmar.Add(uiMember);
-            }
-        }
-
-        private void ReloadEvents_UC1()
-        {
-            var source = _eventService.GetEventsOrderedByDate();
-
-            _events.Clear();
-            _vm.Anmälningar.Spelträffar.Clear();
-
-            foreach (var t in source)
-            {
-                var uiEvent = new UiEvent(t.TräffId, _eventService.FormatEventText(t));
-                _events.Add(uiEvent);
-                _vm.Anmälningar.Spelträffar.Add(uiEvent);
-            }
-        }
-
-
-        private void ReloadEvents_UC2()
-        {
-            var source = _eventService.GetEventsOrderedByDate();
-
-            _vm.Events.EventTexts.Clear();
-
-            foreach (var t in source)
-            {
-                var uiEvent = new UiEvent(t.TräffId, _eventService.FormatEventText(t));
-                _vm.Events.EventTexts.Add(uiEvent);
-            }
-        }
-
-
-
-        private void ReloadGames()
-        {
-            var source = _gameService.GetGames();
-
-            _vm.Games.GameTexts.Clear();
-
-            foreach (var s in source)
-            {
-                var uiGame = new UiGame(s.SpelId, s.ToString());
-                _vm.Games.GameTexts.Add(uiGame);
-            }
-        }
-
-
-        private void ReloadArrangorCombo_UC2()
-        {
-            _vm.Events.AvailableOrganizers.Clear();
-
-            var source = _eventService.GetAvailableOrganizers();
-
-            foreach (var uiMember in source)
-            {
-                _vm.Events.AvailableOrganizers.Add(uiMember);
-            }
-
-            _vm.Events.SelectedOrganizer = null;
-        }
-
-
-
-       
-
-        private void ClearMemberForm()
-        {
-
-            _vm.Members.SelectedMember = null;
-
-            _vm.Members.FirstName = "";
-            _vm.Members.LastName = "";
-            _vm.Members.Email = "";
-            _vm.Members.Phone = "";
-            _vm.Members.SelectedRole = Roll.Medlem;
-        }
-
-
+        
+        
 
         private void Log(string msg)
         {
