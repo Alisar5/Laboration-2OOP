@@ -236,9 +236,14 @@ namespace Laboration_2OOP.ViewModels
 
             try
             {
-                int min = int.Parse(MinPlayers.Trim());
-                int max = int.Parse(MaxPlayers.Trim());
-                int tid = int.Parse(GameTime.Trim());
+                if (!int.TryParse(MinPlayers.Trim(), out int min))
+                    throw new ValideringsException("Min antal spelare måste vara ett heltal.");
+
+                if (!int.TryParse(MaxPlayers.Trim(), out int max))
+                    throw new ValideringsException("Max antal spelare måste vara ett heltal.");
+
+                if (!int.TryParse(GameTime.Trim(), out int tid))
+                    throw new ValideringsException("Speltid måste vara ett heltal.");
 
                 var info = new CreateGameInfo
                 {
@@ -277,9 +282,14 @@ namespace Laboration_2OOP.ViewModels
 
             try
             {
-                int min = int.Parse(MinPlayers.Trim());
-                int max = int.Parse(MaxPlayers.Trim());
-                int tid = int.Parse(GameTime.Trim());
+                if (!int.TryParse(MinPlayers.Trim(), out int min))
+                    throw new ValideringsException("Min antal spelare måste vara ett heltal.");
+
+                if (!int.TryParse(MaxPlayers.Trim(), out int max))
+                    throw new ValideringsException("Max antal spelare måste vara ett heltal.");
+
+                if (!int.TryParse(GameTime.Trim(), out int tid))
+                    throw new ValideringsException("Speltid måste vara ett heltal.");
 
                 var info = new UpdateGameInfo
                 {
