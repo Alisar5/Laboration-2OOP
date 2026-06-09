@@ -41,7 +41,7 @@ namespace Laboration_2OOP.Services
                 var medlem = db.Medlemmar.FirstOrDefault(m => m.MedlemsId == id);
 
                 if (medlem == null)
-                    throw new Exception("Medlem hittades inte i databasen.");
+                    throw new ObjektHittasInteException("Medlem hittades inte i databasen.");
 
                 medlem.UppdateraNamn(info.Förnamn, info.Efternamn);
                 medlem.UppdateraKontakt(info.Email, info.Telefon);

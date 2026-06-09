@@ -41,7 +41,7 @@ namespace Laboration_2OOP.Services
                 var spel = db.Spel.FirstOrDefault(s => s.SpelId == id);
 
                 if (spel == null)
-                    throw new Exception("Spelet hittades inte i databasen.");
+                    throw new ObjektHittasInteException("Spelet hittades inte i databasen.");
 
                 spel.UppdateraInfo(info);
                 spel.SättTillgänglighet(info.Tillgänglighet);

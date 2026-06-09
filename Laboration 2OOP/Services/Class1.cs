@@ -15,14 +15,14 @@ namespace Laboration_2OOP.Services
                 var träff = db.Träffar.FirstOrDefault(t => t.TräffId == eventId);
 
                 if (medlem == null)
-                    throw new Exception("Medlem hittades inte i databasen.");
+                    throw new ObjektHittasInteException("Medlem hittades inte i databasen.");
 
                 if (träff == null)
-                    throw new Exception("Spelträffen hittades inte i databasen.");
+                    throw new ObjektHittasInteException("Spelträffen hittades inte i databasen.");
 
                 // NYT TILLÄGG: medlem måste vara aktiv
                 if (medlem.Status != MedlemsStatus.Aktiv)
-                    throw new Exception("Endast aktiva medlemmar får anmälas till en spelträff.");
+                    throw new InaktivMedlemException("Endast aktiva medlemmar får anmälas till en spelträff.");
 
                 // Hämta relevanta anmälningar först från databasen
                 var träffensAnmälningar = db.Anmälningar
@@ -35,13 +35,13 @@ namespace Laboration_2OOP.Services
                     a.ArAktiv);
 
                 if (redanAnmäld)
-                    throw new Exception("Medlemmen är redan anmäld till spelträffen.");
+                    throw new DubbelAnmalanException("Medlemmen är redan anmäld till spelträffen.");
 
                 // Kontrollera lediga platser
                 int aktivaAnmälningar = träffensAnmälningar.Count(a => a.ArAktiv);
 
                 if (aktivaAnmälningar >= träff.MaxAntalDeltagare)
-                    throw new Exception("Träffen är fullbokad.");
+                    throw new FullbokadException("Träffen är fullbokad.");
 
                 db.Anmälningar.Add(new Anmälan(0, memberId, eventId));
                 db.SaveChanges();
@@ -59,7 +59,7 @@ namespace Laboration_2OOP.Services
                 var anmälan = relevanta.FirstOrDefault(a => a.ArAktiv);
 
                 if (anmälan == null)
-                    throw new Exception("Medlemmen är inte anmäld till spelträffen.");
+                    throw new ValideringsException("Medlemmen är inte anmäld till spelträffen.");
 
                 anmälan.Avanmälan();
                 db.SaveChanges();
