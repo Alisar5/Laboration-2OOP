@@ -18,6 +18,14 @@ using System.Threading.Tasks;
             }
         }
 
+        public async Task<List<Spelträff>> GetEventsOrderedByDateAsync()
+        {
+            using (var db = new AppDbContext())
+            {
+                return await db.Träffar.OrderBy(t => t.StartTid).ToListAsync();
+            }
+        }
+
         public List<UiGame> GetAvailableGamesForUc2()
         {
             using (var db = new AppDbContext())

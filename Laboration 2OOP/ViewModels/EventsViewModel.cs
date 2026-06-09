@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using System.Threading.Tasks;
 
 namespace Laboration_2OOP.ViewModels
 {
@@ -17,6 +18,17 @@ namespace Laboration_2OOP.ViewModels
         private Action? _syncToUc1Action;
 
         public string SectionTitle { get; set; } = "Spelträffar";
+
+        private bool _isLoadingEvents;
+        public bool IsLoadingEvents
+        {
+            get => _isLoadingEvents;
+            set
+            {
+                _isLoadingEvents = value;
+                OnPropertyChanged();
+            }
+        }
 
         public ObservableCollection<UiEvent> EventTexts { get; set; } = new ObservableCollection<UiEvent>();
 
@@ -115,10 +127,18 @@ namespace Laboration_2OOP.ViewModels
             LoadAvailableGames();
             LoadAvailableOrganizers();
         }
-        private void RefreshEvents()
+        private async void RefreshEvents()
         {
-            LoadEvents();
-            _logAction?.Invoke("Uppdaterade spelträffar.");
+            try
+            {
+                await LoadEventsAsync();
+                _logAction?.Invoke("Uppdaterade spelträffar asynkront från databasen.");
+            }
+            catch (Exception ex)
+            {
+                _logAction?.Invoke("Fel vid asynkron laddning: " + ex.Message);
+            }
+           
         }
         public void LoadEvents()
         {
@@ -134,6 +154,25 @@ namespace Laboration_2OOP.ViewModels
             }
 
             _syncToUc1Action?.Invoke();
+        }
+        public async Task LoadEventsAsync()
+        {
+            if (_eventService == null) return;
+            IsLoadingEvents = true;
+            try
+            {
+                var source = await _eventService.GetEventsOrderedByDateAsync();
+                EventTexts.Clear();
+                foreach (var t in source)
+                {
+                    EventTexts.Add(new UiEvent(t.TräffId, _eventService.FormatEventText(t)));
+                }
+                _syncToUc1Action?.Invoke();
+            }
+            finally
+            {
+                IsLoadingEvents = false;
+            }
         }
 
         public void LoadAvailableGames()
@@ -201,7 +240,7 @@ namespace Laboration_2OOP.ViewModels
 
                 _logAction?.Invoke("OK: Spelträff skapad.");
 
-                LoadEvents();
+                _ = LoadEventsAsync();
 
                 // Rensa formuläret lite lagom
                 SelectedDate = null;
