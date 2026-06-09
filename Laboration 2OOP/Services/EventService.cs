@@ -1,4 +1,5 @@
-﻿
+﻿using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
     using global::Laboration_2OOP.DemoData;
     using global::Laboration_2OOP.Domän;
 
