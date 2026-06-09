@@ -15,8 +15,7 @@
             <ColumnDefinition Width="247*"/>
         </Grid.ColumnDefinitions>
         <TabControl Grid.ColumnSpan="2">
-            <TextBlock Text="{Binding TestText}" Margin="10"/>
-            <TextBlock Text="{Binding StatusMessage}" Margin="10,35,10,10"/>
+          
 
             <!-- ========================= -->
             <!-- UC1: Anmälningar           -->
