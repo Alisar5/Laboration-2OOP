@@ -54,7 +54,7 @@ namespace Laboration_2OOP.Domän
 
         public void UppdateraNamn(string förnamn, string efternamn)
         {
-            Förnamn = (förnamn ?? "").Trim();   // ✅ FIX
+            Förnamn = (förnamn ?? "").Trim();
             Efternamn = (efternamn ?? "").Trim();
             Validera();
         }
@@ -66,7 +66,7 @@ namespace Laboration_2OOP.Domän
                 throw new ValideringsException("Förnamn och efternamn är obligatoriska");
 
             if (string.IsNullOrWhiteSpace(Email) || !Email.Contains("@"))
-                throw new ValideringsException("Telefonnummer och email måste anges samt ha giltlig format");
+                throw new ValideringsException("Telefonnummer och email måste anges samt ha giltig format");
         }
 
         public override string ToString()

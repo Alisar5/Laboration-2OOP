@@ -6,7 +6,7 @@ namespace Laboration_2OOP.Domän
 
     public enum Roll { Medlem, Arrangör, Administratör }
 
-    public enum AktivitetTyp { Öppenspelkväll, Temakväll, Introduktion, Turnering }
+    public enum AktivitetTyp { ÖppenSpelkväll, Temakväll, Introduktion, Turnering }
 
     public enum Spelkategori { Strategi, Familj, Samarbete, Fest, Kortspel, Sällskapsspel, Party }
 

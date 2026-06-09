@@ -137,7 +137,7 @@ namespace Laboration_2OOP.Domän
             if (MaxAntalDeltagare <= 0)
                 throw new ValideringsException("Max antal deltagare måste vara större än 0.");
             if (MinAntalDeltagare < 0 || MinAntalDeltagare > MaxAntalDeltagare)
-                throw new ValideringsException("Minnimun antal deltagare måste vara 0 och över samt inte överstiger Max antal.");
+                throw new ValideringsException("Minimun antal deltagare måste vara 0 och över samt inte överstiger Max antal.");
         }
 
         public override string ToString()

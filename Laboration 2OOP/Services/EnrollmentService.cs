@@ -20,7 +20,7 @@ namespace Laboration_2OOP.Services
                 if (träff == null)
                     throw new ObjektHittasInteException("Spelträffen hittades inte i databasen.");
 
-                // NYT TILLÄGG: medlem måste vara aktiv
+                // Medlem måste vara aktiv
                 if (medlem.Status != MedlemsStatus.Aktiv)
                     throw new InaktivMedlemException("Endast aktiva medlemmar får anmälas till en spelträff.");
 

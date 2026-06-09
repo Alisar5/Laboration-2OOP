@@ -56,7 +56,7 @@ namespace Laboration_2OOP.ViewModels
 
         public AktivitetTyp[] AvailableEventTypes { get; set; } =
         {
-            AktivitetTyp.Öppenspelkväll,
+            AktivitetTyp.ÖppenSpelkväll,
             AktivitetTyp.Turnering,
             AktivitetTyp.Temakväll
         };
@@ -242,7 +242,7 @@ namespace Laboration_2OOP.ViewModels
 
                 _ = LoadEventsAsync();
 
-                // Rensa formuläret lite lagom
+
                 SelectedDate = null;
                 TimeText = "";
                 PlaceText = "";

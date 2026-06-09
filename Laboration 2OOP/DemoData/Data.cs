@@ -108,7 +108,7 @@ namespace Laboration_2OOP.DemoData
             {
                 StartTid = DateTime.Now.AddDays(7).Date.AddHours(18),
                 Plats = "Föreningslokalen",
-                AktivitetTyp = AktivitetTyp.Öppenspelkväll,
+                AktivitetTyp = AktivitetTyp.ÖppenSpelkväll,
                 MaxAntalDeltagare = 2,
                 MinAntalDeltagare = 0,
                 Tema = "Öppet",
