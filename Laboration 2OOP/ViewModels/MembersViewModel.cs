@@ -114,6 +114,7 @@ namespace Laboration_2OOP.ViewModels
         public ICommand? RensaCommand { get; set; }
         public ICommand? UppdateraCommand { get; set; }
         public ICommand? RegistreraCommand { get; set; }
+        public ICommand? AvregistreraCommand { get; set; }
 
         public void Init(MemberService memberService, Action<string> logAction, Action syncToAnmalningarAction)
         {
@@ -124,6 +125,7 @@ namespace Laboration_2OOP.ViewModels
             RegistreraCommand = new Kommando(RegisterMember);
             UppdateraCommand = new Kommando(UpdateMember);
             RensaCommand = new Kommando(ClearForm);
+            AvregistreraCommand = new Kommando(DeactivateMember);
 
             SelectedRole = Roll.Medlem;
             LoadMembers();
@@ -221,6 +223,26 @@ namespace Laboration_2OOP.ViewModels
             }
         }
 
+        private void DeactivateMember()
+        {
+            if (_memberService ==null) return;
+            if (SelectedMember == null)
+            {
+                _logAction?.Invoke("Välj en medlem innan du avregistrerar.");
+                return;
+            }
+            try
+            {
+                _memberService.DeactivateMember(SelectedMember.Id);
+                _logAction?.Invoke($"OK: Medlem {SelectedMember.Id} avregistrerades.");
+                ClearForm();
+                LoadMembers();
+            }
+            catch (Exception ex)
+            {
+                _logAction?.Invoke("Fel (kontrollerat): " + ex.Message);
+            }
+        }
         private void ClearForm()
         {
             SelectedMember = null;

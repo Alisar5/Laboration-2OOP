@@ -56,6 +56,16 @@ namespace Laboration_2OOP.Services
                 return db.Medlemmar.FirstOrDefault(m => m.MedlemsId == id);
             }
         }
-
+       public void DeactivateMember(int id)
+        {
+            using (var db = new AppDbContext())
+            {
+                var medlem = db.Medlemmar.FirstOrDefault(m =>m.MedlemsId == id);
+                if (medlem == null)
+                    throw new ObjektHittasInteException("Medlem hittades inte i databasen.");
+                medlem.SattStatus(MedlemsStatus.Inaktiv);
+                db.SaveChanges();
+            }
+        }
     }
 }
