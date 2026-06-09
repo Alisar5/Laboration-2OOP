@@ -1,4 +1,5 @@
 ﻿using Laboration_2OOP;
+using Laboration_2OOP.DemoData;
 using Laboration_2OOP.Domän;
 using Laboration_2OOP.Requests;
 using Laboration_2OOP.Services;
@@ -201,8 +202,9 @@ namespace Laboration_2OOP.ViewModels
                 _logAction?.Invoke("Välj en medlem i listan innan du uppdaterar.");
                 return;
             }
+           
 
-            try
+     try
             {
                 var info = new UpdateMemberInfo
                 {
@@ -222,6 +224,8 @@ namespace Laboration_2OOP.ViewModels
                 _logAction?.Invoke("Fel (kontrollerat): " + ex.Message);
             }
         }
+
+        
 
         private void DeactivateMember()
         {

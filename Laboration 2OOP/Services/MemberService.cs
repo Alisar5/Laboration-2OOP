@@ -21,6 +21,21 @@ namespace Laboration_2OOP.Services
         {
             using (var db = new AppDbContext())
             {
+                string email = NormalizeEmail(info.Email);
+                string phone = NormalizePhone(info.Telefon);
+
+                bool emailExists = db.Medlemmar.Any(m =>
+                    (m.Email ?? "").Trim().ToLower() == email);
+
+                if (emailExists)
+                    throw new Exception("Det finns redan en medlem med samma e-postadress.");
+
+                bool phoneExists = db.Medlemmar.Any(m =>
+                    (m.Telefon ?? "").Trim() == phone);
+
+                if (phoneExists)
+                    throw new Exception("Det finns redan en medlem med samma telefonnummer.");
+
                 db.Medlemmar.Add(new Medlem(
                     0,
                     info.Förnamn,
@@ -34,6 +49,7 @@ namespace Laboration_2OOP.Services
                 db.SaveChanges();
             }
         }
+
         public void UpdateMember(int id, UpdateMemberInfo info)
         {
             using (var db = new AppDbContext())
@@ -66,6 +82,15 @@ namespace Laboration_2OOP.Services
                 medlem.SattStatus(MedlemsStatus.Inaktiv);
                 db.SaveChanges();
             }
+        }
+        private string NormalizeEmail(string? email)
+        {
+            return (email ?? "").Trim().ToLowerInvariant();
+        }
+
+        private string NormalizePhone(string? phone)
+        {
+            return (phone ?? "").Trim();
         }
     }
 }
