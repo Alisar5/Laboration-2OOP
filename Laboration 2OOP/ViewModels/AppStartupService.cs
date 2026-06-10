@@ -9,7 +9,7 @@
             {
                 using (var db = new AppDbContext())
                 {
-                    db.Database.EnsureCreated();
+                   db.Database.EnsureCreated();
 
                     var state = Data.Skapa();
 
