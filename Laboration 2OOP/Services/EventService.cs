@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using System.Linq;
     using global::Laboration_2OOP.DemoData;
     using global::Laboration_2OOP.Domän;
 
@@ -31,9 +32,11 @@ using System.Threading.Tasks;
             using (var db = new AppDbContext())
             {
                 return db.Spel
-                    .ToList()
-                    .Select(s => new UiGame(s.SpelId, s.ToString()))
-                    .ToList();
+                     .Where(s => s.Tillgänglig == TillgänglighetStatus.Tillgänglig)
+                     .OrderBy(s => s.Titel)
+                     .ToList()
+                     .Select(s => new UiGame(s.SpelId, s.ToString()))
+                     .ToList();
             }
         }
 
